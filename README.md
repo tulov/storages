@@ -75,10 +75,3 @@ storage.Save(ctx, strings.NewReader("(>_<)"), "test")
 // Deleting the new file on the storage
 storage.Delete(ctx, "test")
 ```
-
-Roadmap
-=======
-
-See [issues](https://github.com/ulule/gostorages/issues).
-
-Don't hesitate to send patch or improvements.
