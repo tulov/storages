@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"errors"
+	"fmt"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	v4 "github.com/aws/aws-sdk-go-v2/aws/signer/v4"
 	"github.com/aws/aws-sdk-go-v2/config"
@@ -31,6 +32,18 @@ type Config struct {
 }
 
 func NewStorage(cfg Config) (*Storage, error) {
+	envKeys := []string{
+		"AWS_ACCESS_KEY_ID",
+		"AWS_SECRET_ACCESS_KEY",
+		"AWS_REGION",
+	}
+	for _, s := range envKeys {
+		tmp := os.Getenv(s)
+		if tmp == "" {
+			return nil, fmt.Errorf("Env variable %s does not exist", s)
+		}
+	}
+
 	var awsConfig aws.Config
 	var err error
 
