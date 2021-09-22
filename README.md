@@ -1,9 +1,9 @@
-gostorages
+storages
 ==========
 
 A unified interface to manipulate storage backends in Go.
 
-gostorages is used in [picfit](https://github.com/thoas/picfit) to allow us switching storage backends.
+storages is used in [picfit](https://github.com/thoas/picfit) to allow us switching storage backends.
 
 The following backends are supported:
 
