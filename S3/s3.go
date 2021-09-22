@@ -1,4 +1,4 @@
-package s3
+package S3
 
 import (
 	"bytes"
@@ -19,7 +19,7 @@ import (
 	"path/filepath"
 )
 
-// Storage is a s3 storage.
+// Storage is a S3 storage.
 type Storage struct {
 	bucket string
 	s3     *s3.Client
@@ -50,7 +50,7 @@ func NewStorage(cfg Config) (*Storage, error) {
 	if cfg.EndpointUrl != "" {
 		customResolver := aws.EndpointResolverFunc(func(service, region string) (aws.Endpoint, error) {
 			return aws.Endpoint{
-				PartitionID:   "s3",
+				PartitionID:   "S3",
 				URL:           cfg.EndpointUrl,
 				SigningRegion: os.Getenv("AWS_REGION"),
 			}, nil
