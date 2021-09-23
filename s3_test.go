@@ -22,16 +22,7 @@ func Test(t *testing.T) {
 		bucket == "" {
 		t.SkipNow()
 	}
-	cfg := &Config{
-		AccessKeyId:     accessKeyID,
-		SecretAccessKey: secretAccessKey,
-		Region:          region,
-		Bucket:          bucket,
-		EndpointUrl:     endpointUrl,
-		BaseUrl:         baseURL,
-		Location:        location,
-	}
-	storage := NewS3Storage(cfg)
+	storage := NewS3Storage(endpointUrl)
 	filename := "test.txt"
 	txt := []byte("a content example")
 	before := time.Now().Add(time.Second * time.Duration(-1))

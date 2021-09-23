@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"errors"
+	"fmt"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	v4 "github.com/aws/aws-sdk-go-v2/aws/signer/v4"
 	"github.com/aws/aws-sdk-go-v2/config"
@@ -13,20 +14,11 @@ import (
 	ss3 "github.com/mitchellh/goamz/s3"
 	"github.com/ulule/gostorages"
 	"log"
+	"os"
 	"time"
 )
 
-type Config struct {
-	EndpointUrl     string
-	AccessKeyId     string
-	SecretAccessKey string
-	Region          string
-	Bucket          string
-	BaseUrl         string
-	Location        string
-}
-
-// S3Storage is a S3 storage.
+// Storage is a S3 storage.
 type S3Storage struct {
 	*gostorages.BaseStorage
 	bucket string
@@ -38,16 +30,31 @@ type stat struct {
 	ModifiedTime time.Time
 }
 
-func NewS3Storage(cfg *Config) *S3Storage {
+func NewS3Storage(endpointUrl string) *S3Storage {
+	envKeys := []string{
+		"AWS_ACCESS_KEY_ID",
+		"AWS_SECRET_ACCESS_KEY",
+		"AWS_REGION",
+		"S3_BUCKET",
+		"PICFIT_BASE_URL",
+		"PICFIT_LOCATION",
+	}
+	for _, s := range envKeys {
+		tmp := os.Getenv(s)
+		if tmp == "" {
+			panic(fmt.Sprintf("Env variable %s does not exist", s))
+		}
+	}
+
 	var awsConfig aws.Config
 	var err error
 
-	if cfg.EndpointUrl != "" {
+	if endpointUrl != "" {
 		customResolver := aws.EndpointResolverFunc(func(service, region string) (aws.Endpoint, error) {
 			return aws.Endpoint{
 				PartitionID:   "S3",
-				URL:           cfg.EndpointUrl,
-				SigningRegion: cfg.Region,
+				URL:           endpointUrl,
+				SigningRegion: os.Getenv("AWS_REGION"),
 			}, nil
 		})
 
@@ -64,10 +71,10 @@ func NewS3Storage(cfg *Config) *S3Storage {
 	// Create an Amazon S3 service client
 	client := s3.NewFromConfig(awsConfig)
 	return &S3Storage{
-		bucket: cfg.Bucket,
+		bucket: os.Getenv("S3_BUCKET"),
 		s3:     client,
 		BaseStorage: gostorages.NewBaseStorage(
-			cfg.Location, cfg.BaseUrl),
+			os.Getenv("PICFIT_LOCATION"), os.Getenv("PICFIT_BASE_URL")),
 	}
 }
 
