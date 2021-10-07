@@ -87,7 +87,7 @@ func (s *S3Storage) Save(path string, file gostorages.File) error {
 	}
 	input = &s3.PutObjectInput{
 		Bucket:        aws.String(s.bucket),
-		Key:           aws.String(path),
+		Key:           aws.String(s.Path(path)),
 		Body:          bytes.NewBuffer(b),
 		ContentLength: int64(len(b)),
 	}
